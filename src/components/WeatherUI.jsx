@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import "./WetherUI.css";
+import React, { useEffect, useState } from "react";
 import hotWeather from "../assets/hotWeather.jpg";
 import { BiSearch, BiCurrentLocation } from "react-icons/bi";
 import { FaThermometerEmpty } from "react-icons/fa";
@@ -9,9 +8,30 @@ import { GiSunrise, GiSunset } from "react-icons/gi";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
 import { RiSubtractFill } from "react-icons/ri";
+import getFormattedWeatherData from "../weatherService/service.js";
 
 const WeatherUI = () => {
   const [showForecast, setShowForecast] = useState(false);
+  const [weather, setWeather] = useState(null);
+  const [query, setQuery] = useState({ q: "kathmandu" });
+  const [units, setUnits] = useState("metric");
+
+  const getWeather = async () => {
+    // const data = await getFormattedWeatherData({ q: "kathmandu" })
+    const data = await getFormattedWeatherData({ ...query, units })
+      // 5
+      .then((data) => {
+        // g. toast when data is fetched
+        // toast.success(`Fetched weather data for ${data.name}, ${data.country}`);
+        setWeather(data);
+      });
+    console.log(data);
+  };
+
+  // 3
+  useEffect(() => {
+    getWeather();
+  }, [query, units]);
 
   return (
     <div className="body">
