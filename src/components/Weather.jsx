@@ -43,7 +43,7 @@ const Weather = () => {
 
       const res = await fetch(url);
       const data = await res.json();
-      //   console.log(data);
+      console.log(data);
 
       if (!res.ok) {
         alert(data.message);
@@ -61,7 +61,7 @@ const Weather = () => {
       });
     } catch (error) {
       setWeatherData(false);
-      console.log(error);
+      console.log(error.message);
     }
   };
 
