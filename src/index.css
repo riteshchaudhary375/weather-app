@@ -26,6 +26,7 @@ html {
   /* background-color: rgb(0, 51, 113); */
   color: #ececec;
   margin: 0 auto;
+  width: 95%;
 }
 
 .display {
@@ -109,10 +110,15 @@ html {
 }
 
 .input-control .units {
-  width: 14%;
+  width: 15%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  /* background-color: #4adea8; */
+}
+
+.input-control p {
+  margin-inline: 7px;
 }
 
 .input-control .units button {
@@ -213,6 +219,10 @@ html {
   align-items: center;
 }
 
+.forecast-accordian .forecast-button {
+  cursor: pointer;
+}
+
 /* ----------------------------- */
 .forecast {
   margin-top: 13px;
@@ -242,11 +252,31 @@ html {
 
 /* ----------------------------- */
 /* MEDIA QUERY */
+
+@media only screen and (min-width: 600px) {
+  .body {
+    width: 80%;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .body {
+    width: 75%;
+  }
+
+  .input-control .search-control {
+    width: 85%;
+  }
+
+  .input-control .units {
+    width: 14%;
+  }
+}
+
 @media only screen and (min-width: 992px) {
-  /* For Tablet and desktop: */
   .body {
     display: flex;
-    padding-block: 15px;
+    /* padding-block: 15px; */
     width: 80%;
   }
 
@@ -260,11 +290,24 @@ html {
     width: 60%;
     border-radius: 0 7px 7px 0;
   }
+
+  .input-control .search-control {
+    width: 80%;
+  }
+
+  .input-control .units {
+    width: 15%;
+  }
 }
 
 @media only screen and (min-width: 1120px) {
-  /* For lg and xxl screen: */
   .body {
-    width: 70%;
+    width: 65%;
+  }
+}
+
+@media only screen and (min-width: 1380px) {
+  .body {
+    width: 60%;
   }
 }

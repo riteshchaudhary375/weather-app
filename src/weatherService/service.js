@@ -3,51 +3,60 @@ import { DateTime } from "luxon";
 const API_KEY = "16d7a08851d7d710c7e0ddb45b1fcb61";
 const BASE_URL = "https://api.openweathermap.org/data/2.5/";
 
+/* const api = {
+  API_KEY: "16d7a08851d7d710c7e0ddb45b1fcb61",
+  BASE_URL: "https://api.openweathermap.org/data/2.5/",
+}; */
+
+/* const getWeatherData = () => {
+  fetch(`${api.BASE_URL}weather?q=${search}&units=metric&APPID=${api.API_KEY}`)
+    .then((res) => res.json())
+    .then((result) => formatCurrent(result));
+
+  console.log(result);
+};
+ */
+
 // 1
-const getWeatherData = (infoType, searchParams) => {
+const apiData = (infoType, searchParams) => {
   const url = new URL(BASE_URL + infoType);
   url.search = new URLSearchParams({ ...searchParams, appid: API_KEY });
-
+  // for confirmation of url correct or not
   // console.log(url);
-
-  return fetch(url)
-    .then((res) => res.json())
-    .then((data) => data);
+  return fetch(url).then((res) => res.json());
+  // .then((data) => data);
 };
 
-// 7
 // creating icon url
 // icon code => http://openweathermap.org/img/wn/01d@2x.png
 const iconUrlFromCode = (icon) =>
   `http://openweathermap.org/img/wn/${icon}@2x.png`;
 
-// 4
 // luxon
-const formatToLocalTime = (
-  secs,
-  offset,
-  format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a"
-) => DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
+const formatToLocalTime = (secs, offset, format = "hh:mm a") =>
+  DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
 
-// 3
-const formatCurrent = (data) => {
-  //   console.log(data);
+const formatToLocalDate = (secs, offset, format = "cccc, dd LLL yyyy") =>
+  DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
+
+const formatWeather = (data) => {
   const {
-    coord: { lat, lon },
-    main: { temp, feels_like, temp_min, temp_max, humidity },
-    name,
+    coord: { lon, lat },
     dt,
+    name,
+    main: { feels_like, humidity, pressure, temp, temp_max, temp_min },
     sys: { country, sunrise, sunset },
     weather,
     wind: { speed },
     timezone,
+    visibility,
   } = data;
 
-  // 5
-  const { main: details, icon } = weather[0];
-  const formattedLocalTime = formatToLocalTime(dt, timezone);
 
-  // 6
+  const { main: weatherCondition, icon } = weather[0];
+  const formattedLocalTime = formatToLocalTime(dt, timezone);
+  const formattedLocalDate = formatToLocalDate(dt, timezone);
+
   return {
     temp,
     feels_like,
@@ -59,9 +68,10 @@ const formatCurrent = (data) => {
     sunrise: formatToLocalTime(sunrise, timezone, "hh:mm a"),
     sunset: formatToLocalTime(sunset, timezone, "hh:mm a"),
     speed,
-    details,
+    weatherCondition,
     icon: iconUrlFromCode(icon),
     formattedLocalTime,
+    formattedLocalDate,
     dt,
     timezone,
     lat,
@@ -69,8 +79,7 @@ const formatCurrent = (data) => {
   };
 };
 
-// 9
-const formatForecastWeather = (secs, offset, data) => {
+const formatForecast = (secs, offset, data) => {
   // HOURLY
   const hourly = data
     .filter((f) => f.dt > secs)
@@ -81,7 +90,6 @@ const formatForecastWeather = (secs, offset, data) => {
       date: f.dt_txt,
     }))
     .slice(0, 5);
-  //   console.log(hourly);
 
   // DAILY
   const daily = data
@@ -96,25 +104,21 @@ const formatForecastWeather = (secs, offset, data) => {
   return { hourly, daily };
 };
 
-// 2
-const getFormattedWeatherData = async (searchParams) => {
-  // format weather
-  const formattedCurrentWeather = await getWeatherData(
-    "weather", // we using "weather" api
-    searchParams
-  ).then((data) => formatCurrent(data));
+const formatApiData = async (searchParams) => {
+  // for weather
+  const weatherData = await apiData("weather", searchParams).then((data) =>
+    formatWeather(data)
+  );
 
-  // 8
-  // format forecast
-  const { dt, lat, lon, timezone } = formattedCurrentWeather;
-  // now using "forecast" api
-  const formattedForecastWeather = await getWeatherData("forecast", {
+  // for forecast - 1:13:39
+  const { dt, lat, lon, timezone } = weatherData;
+  const forecastData = await apiData("forecast", {
     lat,
     lon,
     units: searchParams.units,
-  }).then((d) => formatForecastWeather(dt, timezone, d.list)); // list is comming from forecast
+  }).then((d) => formatForecast(dt, timezone, d.list));
 
-  return { ...formattedCurrentWeather, ...formattedForecastWeather };
+  return { ...weatherData, ...forecastData };
 };
 
-export default getFormattedWeatherData;
+export default formatApiData;
