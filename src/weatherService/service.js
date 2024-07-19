@@ -39,22 +39,33 @@ const formatToLocalTime = (secs, offset, format = "hh:mm a") =>
 
 const formatToLocalDate = (secs, offset, format = "cccc, dd LLL yyyy") =>
   DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
+const formatToLocalTime = (secs, offset, format = "hh:mm a") =>
+  DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
 
+const formatToLocalDate = (secs, offset, format = "cccc, dd LLL yyyy") =>
+  DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
+
+const formatWeather = (data) => {
 const formatWeather = (data) => {
   const {
     coord: { lon, lat },
     dt,
+    coord: { lon, lat },
+    dt,
     name,
+    main: { feels_like, humidity, pressure, temp, temp_max, temp_min },
     main: { feels_like, humidity, pressure, temp, temp_max, temp_min },
     sys: { country, sunrise, sunset },
     weather,
     wind: { speed },
     timezone,
     visibility,
+    visibility,
   } = data;
 
   const { main: weatherCondition, icon } = weather[0];
   const formattedLocalTime = formatToLocalTime(dt, timezone);
+  const formattedLocalDate = formatToLocalDate(dt, timezone);
   const formattedLocalDate = formatToLocalDate(dt, timezone);
 
   return {
@@ -69,8 +80,10 @@ const formatWeather = (data) => {
     sunset: formatToLocalTime(sunset, timezone, "hh:mm a"),
     speed,
     weatherCondition,
+    weatherCondition,
     icon: iconUrlFromCode(icon),
     formattedLocalTime,
+    formattedLocalDate,
     formattedLocalDate,
     dt,
     timezone,
@@ -79,6 +92,7 @@ const formatWeather = (data) => {
   };
 };
 
+const formatForecast = (secs, offset, data) => {
 const formatForecast = (secs, offset, data) => {
   // HOURLY
   const hourly = data
@@ -109,7 +123,15 @@ const formatApiData = async (searchParams) => {
   const weatherData = await apiData("weather", searchParams).then((data) =>
     formatWeather(data)
   );
+const formatApiData = async (searchParams) => {
+  // for weather
+  const weatherData = await apiData("weather", searchParams).then((data) =>
+    formatWeather(data)
+  );
 
+  // for forecast - 1:13:39
+  const { dt, lat, lon, timezone } = weatherData;
+  const forecastData = await apiData("forecast", {
   // for forecast - 1:13:39
   const { dt, lat, lon, timezone } = weatherData;
   const forecastData = await apiData("forecast", {
@@ -117,8 +139,11 @@ const formatApiData = async (searchParams) => {
     lon,
     units: searchParams.units,
   }).then((d) => formatForecast(dt, timezone, d.list));
+  }).then((d) => formatForecast(dt, timezone, d.list));
 
+  return { ...weatherData, ...forecastData };
   return { ...weatherData, ...forecastData };
 };
 
+export default formatApiData;
 export default formatApiData;
