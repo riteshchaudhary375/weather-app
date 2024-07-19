@@ -46,7 +46,7 @@ const App = () => {
           <div className="body">
             <Display weather={weather} />
             <div className="block-b">
-              <Input />
+              <Input setQuery={setQuery} setUnits={setUnits} />
               <TempTimeDetail weather={weather} units={units} />
               <ForecastAccordianButton
                 showForecast={showForecast}
