@@ -237,6 +237,15 @@ html {
   padding-bottom: 1px;
 }
 
+.showForecastData {
+  font-size: 14px;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  gap: 1px;
+}
+
 .forecast .three-hour-step {
   font-size: 11px;
   display: flex;
