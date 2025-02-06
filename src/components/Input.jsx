@@ -25,7 +25,7 @@ const Input = ({ setQuery, setUnits }) => {
       <div className="search-control">
         <input
           type="text"
-          placeholder="e.g. Kathmandu"
+          placeholder="Search by city name..."
           onChange={(e) => setCity(e.target.value)}
         />
         <BiSearch
@@ -42,9 +42,13 @@ const Input = ({ setQuery, setUnits }) => {
         />
       </div>
       <div className="units">
-        <button onClick={() => setUnits("imperial")}>°F</button>
+        <button onClick={() => setUnits("imperial")} title="Fahrenheit">
+          °F
+        </button>
         <p>|</p>
-        <button onClick={() => setUnits("metric")}>°C</button>
+        <button onClick={() => setUnits("metric")} title="Degree Celsius">
+          °C
+        </button>
       </div>
     </div>
   );
