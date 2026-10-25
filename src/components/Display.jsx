@@ -3,8 +3,10 @@ import hotWeather from "../assets/hotWeather.jpg";
 
 const Display = ({
   weather: { name, country, temp, formattedLocalTime, formattedLocalDate },
+  units,
 }) => {
-  // console.log(temp);
+  const temperatureUnit = units === "metric" ? "°C" : "°F";
+
   return (
     <div className="display">
       <img
@@ -12,23 +14,21 @@ const Display = ({
         src={hotWeather}
         alt="weather image background"
       />
+
       <div className="details">
         <div className="city">
-          {/* <p>Kathmandu</p>
-          <h3>NP</h3> */}
           <p>{name}</p>
           <h3>{country}</h3>
         </div>
+
         <div className="timeDateTemp">
           <div className="timeDate">
-            {/*<p className="time">6:10 PM</p>
-            <p className="date">Monday, 16 July 2024</p> */}
             <p className="time">{formattedLocalTime}</p>
             <p className="date">{formattedLocalDate}</p>
           </div>
+
           <div className="temp">
-            {/* <p>120°F</p> */}
-            <p>{`${temp.toFixed()}°`}</p>
+            <p>{`${temp.toFixed()}${temperatureUnit}`}</p>
           </div>
         </div>
       </div>
