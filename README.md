@@ -7,8 +7,7 @@ Users can search for a city, get weather based on their current location, switch
 ## Live Demo: https://weather-app-3qm6.onrender.com/
 
 ### NOTE:
-
-        - full documentation of this project is in document folder.
+document of this project is in document folder.
 
 ---
 
